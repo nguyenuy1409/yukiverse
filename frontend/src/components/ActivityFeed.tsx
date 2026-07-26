@@ -7,7 +7,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
 const VERDICT_COLOR: Record<string, string> = {
-  // Accepted / OK
+  // Accepted / OK (all platforms)
+  AC:                    '#00ff88',
   OK:                    '#00ff88',
   Accepted:              '#00ff88',
   // Wrong Answer
@@ -32,6 +33,7 @@ const VERDICT_COLOR: Record<string, string> = {
 }
 
 const VERDICT_LABEL: Record<string, string> = {
+  AC:                      'AC',
   OK:                      'AC',
   Accepted:                'AC',
   WRONG_ANSWER:            'WA',
