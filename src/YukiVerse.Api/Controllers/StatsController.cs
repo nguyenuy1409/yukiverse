@@ -155,27 +155,64 @@ public class StatsController : ControllerBase
     // -------------------------------------------------------------------------
     // GET /api/stats/problems
     // Returns solved problem counts per platform for the stats cards.
+    // GitHub has no problem_stats rows; its entry is synthesized from
+    // daily_activities so the card shows total push events instead.
     // -------------------------------------------------------------------------
     [HttpGet("problems")]
     public async Task<IActionResult> Problems(CancellationToken ct = default)
     {
-        var stats = await _db.ProblemStats
+        var rows = await _db.ProblemStats
             .Join(_db.Platforms,
                 ps => ps.PlatformId,
                 p  => p.Id,
-                (ps, p) => new
-                {
-                    platform     = p.Name,
-                    totalSolved  = ps.TotalSolved,
-                    easySolved   = ps.EasySolved,
-                    mediumSolved = ps.MediumSolved,
-                    hardSolved   = ps.HardSolved,
-                    updatedAt    = ps.UpdatedAt,
-                })
+                (ps, p) => new PlatformStatsDto(
+                    p.Name,
+                    ps.TotalSolved,
+                    ps.EasySolved   ?? 0,
+                    ps.MediumSolved ?? 0,
+                    ps.HardSolved   ?? 0,
+                    ps.UpdatedAt,
+                    null))
             .ToListAsync(ct);
 
-        return Ok(new { platforms = stats });
+        // Append GitHub: sum push events from daily_activities
+        var platformMap = await GetPlatformMapAsync(ct);
+        if (platformMap.TryGetValue(PlatformSlugs.GitHub, out var ghId))
+        {
+            var ghTotal = await _db.DailyActivities
+                .Where(d => d.PlatformId == ghId)
+                .SumAsync(d => (int?)d.Count, ct) ?? 0;
+
+            var ghUpdated = await _db.SyncLogs
+                .Where(s => s.PlatformId == ghId)
+                .OrderByDescending(s => s.LastSyncAt)
+                .Select(s => (DateTime?)s.LastSyncAt)
+                .FirstOrDefaultAsync(ct);
+
+            rows.Add(new PlatformStatsDto(
+                PlatformSlugs.GitHub,
+                ghTotal,
+                0, 0, 0,
+                ghUpdated ?? DateTime.UtcNow,
+                "push events"));
+        }
+
+        return Ok(new { platforms = rows });
     }
+
+    /// <summary>
+    /// Projection DTO shared by the Problems endpoint.
+    /// The optional <c>statLabel</c> overrides the default "submissions tracked"
+    /// label shown in the frontend card (e.g. "push events" for GitHub).
+    /// </summary>
+    private record PlatformStatsDto(
+        string   platform,
+        int      totalSolved,
+        int      easySolved,
+        int      mediumSolved,
+        int      hardSolved,
+        DateTime updatedAt,
+        string?  statLabel);
 
     // -------------------------------------------------------------------------
     // GET /api/stats/feed?limit=20&platform=all
