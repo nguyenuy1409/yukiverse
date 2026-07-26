@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { useSyncStatus } from '../hooks/useStats'
 import { PLATFORM_COLORS } from '../types'
+import { api } from '../api/client'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 
@@ -13,7 +15,22 @@ const STATUS_COLOR: Record<string, string> = {
 }
 
 export function SyncStatus() {
-  const { data, loading } = useSyncStatus()
+  const { data, loading, refetch } = useSyncStatus()
+  const [syncing, setSyncing] = useState(false)
+
+  async function handleSync() {
+    setSyncing(true)
+    try {
+      await api.sync.all()
+      // wait a moment then refetch status
+      setTimeout(() => {
+        refetch?.()
+        setSyncing(false)
+      }, 1500)
+    } catch {
+      setSyncing(false)
+    }
+  }
 
   if (loading || !data) return null
 
@@ -31,11 +48,7 @@ export function SyncStatus() {
 
         return (
           <div key={p.platform} className="flex items-center gap-2">
-            {/* blinking dot for in-progress, solid for done */}
-            <div
-              className="h-2 w-2"
-              style={{ backgroundColor: dot }}
-            />
+            <div className="h-2 w-2" style={{ backgroundColor: dot }} />
             <span className="font-pixel text-[7px]" style={{ color: accent }}>
               {name}
             </span>
@@ -45,6 +58,16 @@ export function SyncStatus() {
           </div>
         )
       })}
+
+      {/* Sync now button */}
+      <button
+        onClick={handleSync}
+        disabled={syncing}
+        className="ml-auto border-2 border-px-border bg-px-bg px-3 py-1 font-pixel text-[7px] text-px-dim transition-colors hover:border-gh hover:text-gh disabled:opacity-40"
+        style={{ boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)' }}
+      >
+        {syncing ? '...' : '[ SYNC NOW ]'}
+      </button>
     </div>
   )
 }

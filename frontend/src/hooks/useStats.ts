@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api } from '../api/client'
 
 // ---------------------------------------------------------------------------
@@ -9,10 +9,12 @@ interface FetchState<T> {
   data: T | null
   loading: boolean
   error: string | null
+  refetch: () => void
 }
 
 function useFetch<T>(fetcher: () => Promise<T>): FetchState<T> {
-  const [state, setState] = useState<FetchState<T>>({
+  const [tick, setTick] = useState(0)
+  const [state, setState] = useState<Omit<FetchState<T>, 'refetch'>>({
     data: null,
     loading: true,
     error: null,
@@ -20,7 +22,7 @@ function useFetch<T>(fetcher: () => Promise<T>): FetchState<T> {
 
   useEffect(() => {
     let cancelled = false
-    setState({ data: null, loading: true, error: null })
+    setState(s => ({ ...s, loading: true, error: null }))
 
     fetcher()
       .then(data => {
@@ -34,12 +36,12 @@ function useFetch<T>(fetcher: () => Promise<T>): FetchState<T> {
     return () => {
       cancelled = true
     }
-    // Each specific hook below passes a stable arrow function scoped to its params,
-    // so the empty dep array is intentional here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [tick])
 
-  return state
+  const refetch = useCallback(() => setTick(t => t + 1), [])
+
+  return { ...state, refetch }
 }
 
 // ---------------------------------------------------------------------------
@@ -51,5 +53,5 @@ export const useDaily      = (days = 90)  => useFetch(() => api.daily(days))
 export const useCumulative = ()           => useFetch(api.cumulative)
 export const useRating     = ()           => useFetch(api.rating)
 export const useProblems   = ()           => useFetch(api.problems)
-export const useFeed       = (limit = 20) => useFetch(() => api.feed(limit))
+export const useFeed       = (limit = 30) => useFetch(() => api.feed(limit))
 export const useSyncStatus = ()           => useFetch(api.syncStatus)

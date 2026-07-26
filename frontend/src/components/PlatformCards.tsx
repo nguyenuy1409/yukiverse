@@ -62,7 +62,7 @@ function StatCard({ stats }: { stats: PlatformStats }) {
             </div>
           ) : (
             <p className="font-mono text-[10px] text-px-dim">
-              {stats.statLabel ?? 'SUBMISSIONS'}
+              {stats.statLabel ?? 'PROBLEMS'}
             </p>
           )}
         </div>
@@ -120,10 +120,4 @@ export function PlatformCards() {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {ORDER.map(platform => {
-        const stats = statsMap.get(platform)
-        if (!stats) return null
-        return <StatCard key={platform} stats={stats} />
-      })}
-    </div>
-  )
-}
+        const stats = statsMap.get(plat
