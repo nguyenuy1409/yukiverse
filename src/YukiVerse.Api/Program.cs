@@ -88,6 +88,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Auto-apply EF migrations on startup so Railway/Render databases are always up to date.
+// Migrations are idempotent, so this is safe to run every boot.
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider
+         .GetRequiredService<YukiVerseDbContext>()
+         .Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -116,10 +125,4 @@ RecurringJob.AddOrUpdate<SyncJobsService>("sync-atcoder",
 RecurringJob.AddOrUpdate<SyncJobsService>("sync-leetcode",
     x => x.SyncLeetCodeAsync(), statsCron);
 
-RecurringJob.AddOrUpdate<SyncJobsService>("sync-github",
-    x => x.SyncGitHubAsync(), githubCron);
-
-app.UseCors();
-app.MapControllers();
-
-app.Run();
+RecurringJob.AddOrUpdate<SyncJob
