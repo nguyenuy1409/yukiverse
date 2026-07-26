@@ -7,33 +7,62 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime)
 
 const VERDICT_COLOR: Record<string, string> = {
-  OK:                    '#4ade80',
-  Accepted:              '#4ade80',
+  // Accepted / OK
+  OK:                    '#00ff88',
+  Accepted:              '#00ff88',
+  // Wrong Answer
   WRONG_ANSWER:          '#f87171',
   'Wrong Answer':        '#f87171',
+  // TLE
   TIME_LIMIT_EXCEEDED:   '#fbbf24',
   'Time Limit Exceeded': '#fbbf24',
+  // Runtime Error
   RUNTIME_ERROR:         '#fb923c',
   'Runtime Error':       '#fb923c',
+  // Compile Error
   COMPILATION_ERROR:     '#f87171',
-  PushEvent:             '#4ade80',
-  CreateEvent:           '#38bdf8',
+  'Compile Error':       '#f87171',
+  // Memory Limit
+  MEMORY_LIMIT_EXCEEDED: '#fbbf24',
+  'Memory Limit Exceeded': '#fbbf24',
+  // GitHub
+  commit:                '#e2e8f0',
+  push:                  '#e2e8f0',
+  PushEvent:             '#e2e8f0',
 }
 
-const VERDICT_SHORT: Record<string, string> = {
-  OK:                    'AC',
-  Accepted:              'AC',
-  WRONG_ANSWER:          'WA',
-  'Wrong Answer':        'WA',
-  TIME_LIMIT_EXCEEDED:   'TLE',
-  'Time Limit Exceeded': 'TLE',
-  RUNTIME_ERROR:         'RE',
-  'Runtime Error':       'RE',
-  COMPILATION_ERROR:     'CE',
-  PushEvent:             'PUSH',
-  CreateEvent:           'NEW',
+const VERDICT_LABEL: Record<string, string> = {
+  OK:                      'AC',
+  Accepted:                'AC',
+  WRONG_ANSWER:            'WA',
+  'Wrong Answer':          'WA',
+  TIME_LIMIT_EXCEEDED:     'TLE',
+  'Time Limit Exceeded':   'TLE',
+  RUNTIME_ERROR:           'RE',
+  'Runtime Error':         'RE',
+  COMPILATION_ERROR:       'CE',
+  'Compile Error':         'CE',
+  MEMORY_LIMIT_EXCEEDED:   'MLE',
+  'Memory Limit Exceeded': 'MLE',
+  // GitHub types
+  commit:                  'COMMIT',
+  push:                    'COMMIT',
+  PushEvent:               'COMMIT',
 }
 
+function getLabel(verdict: string | null | undefined, type: string): string {
+  // For GitHub commits, always show COMMIT
+  if (type === 'commit' || type === 'push') return 'COMMIT'
+  if (!verdict) return type.toUpperCase()
+  return VERDICT_LABEL[verdict] ?? verdict.slice(0, 3).toUpperCase()
+}
+
+function getColor(verdict: string | null | undefined, type: string): string {
+  // GitHub commits → white
+  if (type === 'commit' || type === 'push') return '#e2e8f0'
+  if (!verdict) return '#4a4d70'
+  return VERDICT_COLOR[verdict] ?? '#f87171'
+}
 
 export function ActivityFeed() {
   const { data, loading, error } = useFeed(30)
@@ -71,17 +100,16 @@ export function ActivityFeed() {
   return (
     <div className="space-y-[2px] overflow-y-auto" style={{ maxHeight: 340 }}>
       {items.map((item, i) => {
-        const accent  = PLATFORM_COLORS[item.platform] ?? '#6B7280'
-        const verdict = item.verdict ?? item.type
-        const short   = VERDICT_SHORT[verdict] ?? verdict.slice(0, 3).toUpperCase()
-        const vColor  = VERDICT_COLOR[verdict] ?? '#4a4d70'
+        const accent = PLATFORM_COLORS[item.platform] ?? '#6B7280'
+        const label  = getLabel(item.verdict, item.type)
+        const vColor = getColor(item.verdict, item.type)
 
         return (
           <div
             key={i}
             className="flex items-center gap-2 border border-transparent px-1.5 py-1 transition-colors hover:border-px-border hover:bg-px-border"
           >
-            {/* Pixel platform icon badge */}
+            {/* Platform icon */}
             <div
               className="flex h-7 w-7 flex-shrink-0 items-center justify-center"
               style={{
@@ -97,17 +125,17 @@ export function ActivityFeed() {
               {item.title}
             </span>
 
-            {/* Verdict */}
+            {/* Verdict/type label */}
             <span
               className="flex-shrink-0 font-pixel text-[7px]"
               style={{ color: vColor }}
             >
-              {short}
+              {label}
             </span>
 
             {/* Time */}
             <span className="flex-shrink-0 font-mono text-[9px] text-px-dim tabular-nums">
-              {dayjs(item.occurredAt).fromNow(true).toUpperCase()}
+              {dayjs(item.occurredAt).fromNow()}
             </span>
           </div>
         )
