@@ -1,5 +1,4 @@
-// Pixel art platform icons, rendered as SVG pixel grids.
-// Each row is a string: '.' = transparent, letter = palette key.
+// Platform icons: PNG pixel art images for GH/LC/AC, SVG pixel grid for CF.
 
 interface PixelArtProps {
   rows:     string[]
@@ -35,7 +34,6 @@ function PixelArt({ rows, palette, cellSize }: PixelArtProps) {
 
 // ---------------------------------------------------------------------------
 // Codeforces — bar chart (yellow | blue | red)
-// Based on the CF bar-chart icon: blue tallest, yellow medium, red shortest
 // ---------------------------------------------------------------------------
 const CF_ROWS = [
   '..........',
@@ -50,62 +48,32 @@ const CF_ROWS = [
 const CF_P = { Y: '#fbbf24', B: '#60a5fa', R: '#f87171' }
 
 // ---------------------------------------------------------------------------
-// LeetCode — orange C-bracket with grey horizontal bar
+// PNG-based icons (pixel art images provided by user)
 // ---------------------------------------------------------------------------
-const LC_ROWS = [
-  '.OOOOOO.',
-  'OO.......',
-  'O........',
-  'O..GGGGG.',
-  'O........',
-  'OO.......',
-  '.OOOOOO.',
-]
-const LC_P = { O: '#fb923c', G: '#9ca3af' }
+function PngIcon({ src, size }: { src: string; size: number }) {
+  const px = size * 10
+  return (
+    <img
+      src={src}
+      width={px}
+      height={px}
+      style={{ imageRendering: 'pixelated', display: 'block', flexShrink: 0 }}
+      alt=""
+    />
+  )
+}
 
-// ---------------------------------------------------------------------------
-// GitHub — Octocat silhouette (cat ears + round head + tentacles)
-// ---------------------------------------------------------------------------
-const GH_ROWS = [
-  '.GGG.GGG.',
-  'GGGGGGGGG',
-  'G.G...G.G',
-  'G.......G',
-  '.GG...GG.',
-  '.GGGGGGG.',
-  '..GG.GG..',
-  '..GG.GG..',
-]
-const GH_P = { G: '#e2e8f0' }
-
-// ---------------------------------------------------------------------------
-// AtCoder — globe grid (horizontal + vertical lines on round shape)
-// ---------------------------------------------------------------------------
-const AC_ROWS = [
-  '..AAAAA..',
-  '.A.A.A.A.',
-  '.AAAAAAA.',
-  '.A.A.A.A.',
-  '.AAAAAAA.',
-  '.A.A.A.A.',
-  '..AAAAA..',
-]
-const AC_P = { A: '#93c5fd' }
-
-// ---------------------------------------------------------------------------
-// Named exports
-// ---------------------------------------------------------------------------
 export function CodeforcesPixel({ size = 2 }: { size?: number }) {
   return <PixelArt rows={CF_ROWS} palette={CF_P} cellSize={size} />
 }
 export function LeetCodePixel({ size = 2 }: { size?: number }) {
-  return <PixelArt rows={LC_ROWS} palette={LC_P} cellSize={size} />
+  return <PngIcon src="/icons/leetcode.png" size={size} />
 }
 export function GitHubPixel({ size = 2 }: { size?: number }) {
-  return <PixelArt rows={GH_ROWS} palette={GH_P} cellSize={size} />
+  return <PngIcon src="/icons/github.png" size={size} />
 }
 export function AtCoderPixel({ size = 2 }: { size?: number }) {
-  return <PixelArt rows={AC_ROWS} palette={AC_P} cellSize={size} />
+  return <PngIcon src="/icons/atcoder.png" size={size} />
 }
 
 export function PlatformIcon({
