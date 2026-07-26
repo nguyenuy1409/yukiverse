@@ -22,7 +22,7 @@ export function SyncStatus() {
   const [countdown, setCountdown] = useState(AUTO_SYNC_INTERVAL)
   const lastSyncRef = useRef(Date.now())
 
-  // Auto-sync every 30 minutes
+  // Auto-sync every 30 minutes + countdown tick every second
   useEffect(() => {
     const timer = setInterval(() => {
       const elapsed = Date.now() - lastSyncRef.current
@@ -35,7 +35,7 @@ export function SyncStatus() {
       } else {
         setCountdown(remaining)
       }
-    }, 10_000) // check every 10s
+    }, 1_000) // tick every second for smooth countdown
 
     return () => clearInterval(timer)
   }, [])
@@ -52,7 +52,10 @@ export function SyncStatus() {
     }
   }
 
-  const minutesLeft = Math.ceil(countdown / 60_000)
+  const totalSec = Math.max(0, Math.ceil(countdown / 1000))
+  const minutesLeft = Math.floor(totalSec / 60)
+  const secondsLeft = totalSec % 60
+  const countdownStr = `${String(minutesLeft).padStart(2,'0')}:${String(secondsLeft).padStart(2,'0')}`
 
   if (loading || !data) return null
 
@@ -83,7 +86,7 @@ export function SyncStatus() {
 
       <div className="ml-auto flex items-center gap-3">
         <span className="font-pixel text-[6px] text-px-dim">
-          NEXT: {minutesLeft}M
+          NEXT: {countdownStr}
         </span>
         <button
           onClick={handleSync}

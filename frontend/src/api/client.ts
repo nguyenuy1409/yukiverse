@@ -40,10 +40,12 @@ export const api = {
       post(`${SYNC_BASE}/codeforces`),
       post(`${SYNC_BASE}/atcoder`),
       post(`${SYNC_BASE}/leetcode/stats`),
+      post(`${SYNC_BASE}/leetcode/submissions`),
     ]),
     github:     () => post(`${SYNC_BASE}/github`),
     codeforces: () => post(`${SYNC_BASE}/codeforces`),
     atcoder:    () => post(`${SYNC_BASE}/atcoder`),
     leetcode:   () => post(`${SYNC_BASE}/leetcode/stats`),
+    leetcodeSubmissions: () => post(`${SYNC_BASE}/leetcode/submissions`),
   },
 }
