@@ -22,11 +22,8 @@ export function SyncStatus() {
     setSyncing(true)
     try {
       await api.sync.all()
-      // wait a moment then refetch status
-      setTimeout(() => {
-        refetch?.()
-        setSyncing(false)
-      }, 1500)
+      // reload page so all components get fresh data
+      window.location.reload()
     } catch {
       setSyncing(false)
     }
