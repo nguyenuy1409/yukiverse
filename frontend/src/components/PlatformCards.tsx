@@ -120,4 +120,11 @@ export function PlatformCards() {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
       {ORDER.map(platform => {
-        const stats = statsMap.get(plat
+        const stats = statsMap.get(platform)
+        return stats
+          ? <StatCard key={platform} stats={stats} />
+          : <CardSkeleton key={platform} platform={platform} />
+      })}
+    </div>
+  )
+}
