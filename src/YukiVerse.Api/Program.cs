@@ -82,7 +82,7 @@ var corsOrigins = (builder.Configuration["CORS_ORIGINS"] ?? "http://localhost:51
 
 builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
-        policy.WithOrigins(corsOrigins)
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod()));
 
