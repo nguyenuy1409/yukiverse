@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "JetBrains Mono", monospace;
+    background-color: #07070f;
+    color: #b8bce8;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.08) 3px,
+      rgba(0, 0, 0, 0.08) 4px
+    );
+  }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #2a2d50; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a3d60; }
+}
+
+@layer components {
+  /* Use raw CSS values - @apply with custom colors is unreliable in components layer */
+  .pixel-panel {
+    background-color: #0d0d1c;
+    border: 2px solid #1e2040;
+    box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.9);
+  }
+
+  .pixel-title-bar {
+    background-color: #1e2040;
+    border-bottom: 2px solid #1e2040;
+    padding: 8px 12px;
+  }
+
+  .pixel-title-bar span {
+    font-family: "Press Start 2P", monospace;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #b8bce8;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  .pixel-cursor::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+  }
+}
