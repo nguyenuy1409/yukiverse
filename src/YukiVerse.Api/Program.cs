@@ -125,4 +125,7 @@ RecurringJob.AddOrUpdate<SyncJobsService>("sync-atcoder",
 RecurringJob.AddOrUpdate<SyncJobsService>("sync-leetcode",
     x => x.SyncLeetCodeAsync(), statsCron);
 
-RecurringJob.AddOrUpdate<SyncJob
+RecurringJob.AddOrUpdate<SyncJobsService>("sync-github",
+    x => x.SyncGitHubAsync(), githubCron);
+
+app.Run();
