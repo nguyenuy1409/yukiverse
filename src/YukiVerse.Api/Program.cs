@@ -128,4 +128,8 @@ RecurringJob.AddOrUpdate<SyncJobsService>("sync-leetcode",
 RecurringJob.AddOrUpdate<SyncJobsService>("sync-github",
     x => x.SyncGitHubAsync(), githubCron);
 
+app.UseCors();
+app.UseAuthorization();
+app.MapControllers();
+
 app.Run();
