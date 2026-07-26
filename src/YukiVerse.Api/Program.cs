@@ -74,6 +74,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS: in production set CORS_ORIGINS to the frontend URL, e.g.
+//   CORS_ORIGINS=https://yukiverse.vercel.app
+// Multiple origins can be comma-separated.
+var corsOrigins = (builder.Configuration["CORS_ORIGINS"] ?? "http://localhost:5173")
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(corsOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -107,6 +119,7 @@ RecurringJob.AddOrUpdate<SyncJobsService>("sync-leetcode",
 RecurringJob.AddOrUpdate<SyncJobsService>("sync-github",
     x => x.SyncGitHubAsync(), githubCron);
 
+app.UseCors();
 app.MapControllers();
 
 app.Run();
