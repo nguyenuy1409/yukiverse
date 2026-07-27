@@ -10,7 +10,7 @@ import {
 } from 'recharts'
 import { useDaily } from '../hooks/useStats'
 import { useTheme } from '../contexts/ThemeContext'
-import { PLATFORM_COLORS } from '../types'
+import { PLATFORM_COLORS, SAKURA_PLATFORM_COLORS } from '../types'
 import { ChartSkeleton } from './Skeleton'
 import dayjs from 'dayjs'
 
@@ -18,29 +18,29 @@ const PLATFORMS = ['codeforces', 'leetcode', 'github', 'atcoder'] as const
 
 function getChartTheme(theme: string) {
   if (theme === 'sakura') return {
-    grid:        'rgba(255, 190, 170, 0.14)',
-    tick:        '#c8a898',
-    tooltipBg:   'rgba(20, 12, 9, 0.88)',
+    grid:          'rgba(255, 190, 170, 0.14)',
+    tick:          '#c8a898',
+    tooltipBg:     'rgba(20, 12, 9, 0.88)',
     tooltipBorder: '1px solid rgba(255,255,255,0.18)',
     tooltipRadius: 10,
     tooltipShadow: '0 8px 24px rgba(0,0,0,0.30)',
-    labelColor:  '#f0e4dc',
-    itemColor:   '#e8d0c8',
-    cursor:      'rgba(255,190,170,0.10)',
-    legendColor: '#c0907a',
+    labelColor:    '#f0e4dc',
+    itemColor:     '#e8d0c8',
+    cursor:        'rgba(255,190,170,0.10)',
+    legendColor:   '#c0907a',
   }
   // cyber
   return {
-    grid:        '#1e2040',
-    tick:        '#4a4d70',
-    tooltipBg:   '#0d0d1c',
+    grid:          '#1e2040',
+    tick:          '#4a4d70',
+    tooltipBg:     '#0d0d1c',
     tooltipBorder: '2px solid #1e2040',
     tooltipRadius: 0,
     tooltipShadow: '4px 4px 0 0 rgba(0,0,0,0.9)',
-    labelColor:  '#b8bce8',
-    itemColor:   '#b8bce8',
-    cursor:      '#1e2040',
-    legendColor: '#4a4d70',
+    labelColor:    '#b8bce8',
+    itemColor:     '#b8bce8',
+    cursor:        '#1e2040',
+    legendColor:   '#4a4d70',
   }
 }
 
@@ -48,6 +48,7 @@ export function DailyChart() {
   const { data, loading, error } = useDaily(90)
   const { theme } = useTheme()
   const t = getChartTheme(theme)
+  const barColors = theme === 'sakura' ? SAKURA_PLATFORM_COLORS : PLATFORM_COLORS
 
   if (loading) return <ChartSkeleton height={260} />
   if (error)
@@ -108,7 +109,7 @@ export function DailyChart() {
             key={p}
             dataKey={p}
             stackId="a"
-            fill={PLATFORM_COLORS[p]}
+            fill={barColors[p]}
             name={p}
           />
         ))}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSyncStatus } from '../hooks/useStats'
 import { useTheme } from '../contexts/ThemeContext'
-import { PLATFORM_COLORS, PLATFORM_LABELS } from '../types'
+import { PLATFORM_COLORS, SAKURA_PLATFORM_COLORS, PLATFORM_LABELS } from '../types'
 import { api } from '../api/client'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -177,7 +177,7 @@ export function SyncStatus() {
         <span className="font-pixel text-[7px] text-px-dim">AUTO-SYNC</span>
 
         {data.platforms.map(p => {
-          const accent = PLATFORM_COLORS[p.platform] ?? '#6B7280'
+          const accent = (isSakura ? SAKURA_PLATFORM_COLORS[p.platform] : PLATFORM_COLORS[p.platform]) ?? '#6B7280'
           const dot    = STATUS_COLOR[p.status] ?? '#3a3d60'
           const name   = (PLATFORM_LABELS[p.platform] ?? p.platform).toUpperCase()
           return (

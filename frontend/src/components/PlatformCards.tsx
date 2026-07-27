@@ -8,6 +8,14 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 
+// Full class-name strings so Tailwind's scanner includes them in the build.
+const SAKURA_TEXT_CLASSES: Record<string, string> = {
+  codeforces: 'text-sky-300',
+  atcoder:    'text-rose-300',
+  leetcode:   'text-yellow-200',
+  github:     'text-emerald-300',
+}
+
 const ORDER = ['codeforces', 'atcoder', 'leetcode', 'github']
 
 const PIXEL_SHADOW: Record<string, string> = {
@@ -63,14 +71,20 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
       {/* Title bar */}
       <div className="flex items-center gap-2 px-3 py-2" style={titleBarStyle}>
         <PlatformIcon platform={stats.platform} size={2} />
-        <span className="font-pixel text-[7px] tracking-widest" style={{ color }}>
+        <span
+          className={`font-pixel text-[7px] tracking-widest ${isSakura ? (SAKURA_TEXT_CLASSES[stats.platform] ?? '') : ''}`}
+          style={isSakura ? undefined : { color }}
+        >
           {label.toUpperCase()}
         </span>
       </div>
 
       {/* Body */}
       <div className="p-4">
-        <p className="font-pixel text-3xl tabular-nums leading-none" style={{ color }}>
+        <p
+          className={`font-pixel text-3xl tabular-nums leading-none ${isSakura ? 'text-white' : ''}`}
+          style={isSakura ? undefined : { color }}
+        >
           {stats.totalSolved.toString().padStart(3, '0')}
         </p>
 
@@ -82,13 +96,13 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
               <span className="text-red-400">H:{stats.hardSolved}</span>
             </div>
           ) : (
-            <p className="font-mono text-[10px] text-px-dim">
+            <p className={`font-mono text-[10px] ${isSakura ? 'text-white/60' : 'text-px-dim'}`}>
               {stats.statLabel ?? 'PROBLEMS'}
             </p>
           )}
         </div>
 
-        <p className="mt-3 font-pixel text-[6px] text-px-dim">
+        <p className={`mt-3 font-pixel text-[6px] ${isSakura ? 'text-white/40' : 'text-px-dim'}`}>
           {dayjs(stats.updatedAt).fromNow().toUpperCase()}
         </p>
       </div>
@@ -97,7 +111,7 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
 }
 
 function CardSkeleton({ platform, theme }: { platform: string; theme: string }) {
-  const color     = PLATFORM_COLORS[platform] ?? '#333'
+  const color    = PLATFORM_COLORS[platform] ?? '#333'
   const isSakura = theme === 'sakura'
 
   const skeletonStyle = isSakura

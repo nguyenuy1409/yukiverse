@@ -10,7 +10,7 @@ import {
 } from 'recharts'
 import { useCumulative } from '../hooks/useStats'
 import { useTheme } from '../contexts/ThemeContext'
-import { PLATFORM_COLORS } from '../types'
+import { PLATFORM_COLORS, SAKURA_PLATFORM_COLORS } from '../types'
 import { ChartSkeleton } from './Skeleton'
 import dayjs from 'dayjs'
 
@@ -48,6 +48,7 @@ export function CumulativeChart() {
   const { data, loading, error } = useCumulative()
   const { theme } = useTheme()
   const t = getChartTheme(theme)
+  const areaColors = theme === 'sakura' ? SAKURA_PLATFORM_COLORS : PLATFORM_COLORS
 
   if (loading) return <ChartSkeleton height={260} />
   if (error)
@@ -71,8 +72,8 @@ export function CumulativeChart() {
         <defs>
           {PLATFORMS.map(p => (
             <linearGradient key={p} id={`grad-${p}`} x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%"  stopColor={PLATFORM_COLORS[p]} stopOpacity={0.25} />
-              <stop offset="95%" stopColor={PLATFORM_COLORS[p]} stopOpacity={0} />
+              <stop offset="5%"  stopColor={areaColors[p]} stopOpacity={0.25} />
+              <stop offset="95%" stopColor={areaColors[p]} stopOpacity={0} />
             </linearGradient>
           ))}
         </defs>
@@ -116,7 +117,7 @@ export function CumulativeChart() {
             type="stepAfter"
             dataKey={p}
             stackId="1"
-            stroke={PLATFORM_COLORS[p]}
+            stroke={areaColors[p]}
             strokeWidth={1.5}
             fill={`url(#grad-${p})`}
             name={p}

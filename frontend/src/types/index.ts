@@ -67,6 +67,20 @@ export const PLATFORM_COLORS: Record<string, string> = {
   github:     '#22C55E',
 }
 
+/** Pastel palette for Sakura mode.
+ *  Hex values are the exact backing colours of these Tailwind classes:
+ *    codeforces → text-sky-300     #7dd3fc
+ *    atcoder    → text-rose-300    #fda4af
+ *    leetcode   → text-yellow-200  #fef08a
+ *    github     → text-emerald-300 #6ee7b7
+ */
+export const SAKURA_PLATFORM_COLORS: Record<string, string> = {
+  codeforces: '#7dd3fc',
+  atcoder:    '#fda4af',
+  leetcode:   '#fef08a',
+  github:     '#6ee7b7',
+}
+
 export const PLATFORM_LABELS: Record<string, string> = {
   codeforces: 'Codeforces',
   atcoder:    'AtCoder',
