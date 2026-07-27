@@ -28,34 +28,40 @@ interface PlatSyncResult {
 
 const SYNC_JOBS = [
   {
-    key: 'github',
-    label: 'GITHUB',
-    fn: () => api.sync.github() as Promise<Record<string, unknown>>,
-    summary: (r: Record<string, unknown>) => `+${r.newPushEvents ?? 0} commits`,
-  },
-  {
     key: 'codeforces',
     label: 'CODEFORCES',
     fn: () => api.sync.codeforces() as Promise<Record<string, unknown>>,
     summary: (r: Record<string, unknown>) => `+${r.newSubmissions ?? 0} subs`,
+    hidden: false,
   },
   {
     key: 'atcoder',
     label: 'ATCODER',
     fn: () => api.sync.atcoder() as Promise<Record<string, unknown>>,
     summary: (r: Record<string, unknown>) => `+${r.newSubmissions ?? 0} subs`,
+    hidden: false,
   },
   {
+    // stats-only sync — runs silently, not shown in panel
     key: 'leetcode',
-    label: 'LEETCODE',
+    label: 'LEETCODE STATS',
     fn: () => api.sync.leetcode() as Promise<Record<string, unknown>>,
-    summary: (r: Record<string, unknown>) => `${r.totalSolved ?? '?'} solved`,
+    summary: (_r: Record<string, unknown>) => '',
+    hidden: true,
   },
   {
     key: 'leetcode_subs',
-    label: 'LC SUBS',
+    label: 'LEETCODE',
     fn: () => api.sync.leetcodeSubmissions() as Promise<Record<string, unknown>>,
     summary: (r: Record<string, unknown>) => `+${r.newSubmissions ?? 0} subs`,
+    hidden: false,
+  },
+  {
+    key: 'github',
+    label: 'GITHUB',
+    fn: () => api.sync.github() as Promise<Record<string, unknown>>,
+    summary: (r: Record<string, unknown>) => `+${r.newPushEvents ?? 0} commits`,
+    hidden: false,
   },
 ]
 
@@ -231,7 +237,7 @@ export function SyncStatus() {
           className="sync-bar-sub flex flex-wrap gap-4 border-2 border-t-0 border-px-border bg-px-bg px-4 py-2"
           style={{ boxShadow: '4px 4px 0 0 rgba(0,0,0,0.9)' }}
         >
-          {SYNC_JOBS.map(({ key, label }) => {
+          {SYNC_JOBS.filter(j => !j.hidden).map(({ key, label }) => {
             const r = platResults[key] ?? { status: 'pending' as PlatSyncStatus }
             return (
               <div key={key} className="flex items-center gap-2">
