@@ -1,34 +1,43 @@
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { ThemeProvider, useTheme } from './contexts/ThemeContext'
-import { ThemeSwitcher }    from './components/ThemeSwitcher'
-import { PlatformCards }    from './components/PlatformCards'
-import { SyncStatus }       from './components/SyncStatus'
-import { ActivityHeatmap }  from './components/ActivityHeatmap'
-import { DailyChart }       from './components/DailyChart'
-import { CumulativeChart }  from './components/CumulativeChart'
-import { RatingChart }      from './components/RatingChart'
-import { ActivityFeed }     from './components/ActivityFeed'
-import { SakuraPetals }     from './components/SakuraPetals'
+import { ThemeSwitcher }           from './components/ThemeSwitcher'
+import { SakuraPetals }            from './components/SakuraPetals'
+import { HomePage }                from './pages/HomePage'
+import { DashboardPage }           from './pages/DashboardPage'
+import { BlogPage }                from './pages/BlogPage'
 
-// ── Section wrapper — layout unchanged ───────────────────────────────────────
+// ── Nav tab ───────────────────────────────────────────────────────────────────
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="pixel-panel">
-      <div className="pixel-title-bar">
-        <span>&gt; {title}</span>
-      </div>
-      <div className="p-4">{children}</div>
-    </div>
-  )
-}
-
-// ── Main app content ──────────────────────────────────────────────────────────
-
-function AppContent() {
+function NavTab({ to, label }: { to: string; label: string }) {
   const { theme } = useTheme()
   const isSakura  = theme === 'sakura'
 
-  // GitHub button adapts style to current theme
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        [
+          'font-pixel text-[7px] px-3 py-1.5 border-2 transition-colors',
+          isActive
+            ? isSakura
+              ? 'border-rose-300/60 text-rose-300 bg-rose-300/10'
+              : 'border-cf text-cf bg-cf/10'
+            : 'border-px-border text-px-dim hover:border-px-text hover:text-px-text',
+        ].join(' ')
+      }
+      style={isSakura ? undefined : { boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)' }}
+    >
+      {label}
+    </NavLink>
+  )
+}
+
+// ── App shell ─────────────────────────────────────────────────────────────────
+
+function AppShell() {
+  const { theme } = useTheme()
+  const isSakura  = theme === 'sakura'
+
   const ghLinkStyle: React.CSSProperties = isSakura
     ? {
         background: 'rgba(28, 16, 12, 0.55)',
@@ -45,21 +54,20 @@ function AppContent() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Falling petals — sakura mode only, above bg, below all panels */}
       {isSakura && <SakuraPetals />}
 
-      {/* All UI content */}
       <div className="relative" style={{ zIndex: 10 }}>
 
-        {/* ── Header ─────────────────────────────────────────────────────── */}
+        {/* ── Header ───────────────────────────────────────────────────────── */}
         <header
           className="border-b-2 border-px-border bg-px-panel"
           style={{ boxShadow: '0 4px 0 0 rgba(0,0,0,0.8)' }}
         >
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
 
+            {/* Logo + Nav */}
+            <div className="flex items-center gap-6">
             <div className="relative">
-              {/* Cherry blossom branch decoration — sakura mode only */}
               {isSakura && (
                 <svg
                   aria-hidden="true"
@@ -75,15 +83,9 @@ function AppContent() {
                     opacity: 0.82,
                   }}
                 >
-                  {/* Main branch */}
                   <path d="M8 44 Q32 28 58 18 Q80 10 108 6" stroke="#b07048" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-                  {/* Sub-branch left */}
                   <path d="M30 34 Q24 22 18 14" stroke="#b07048" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                  {/* Sub-branch right */}
                   <path d="M72 16 Q80 8 90 4" stroke="#b07048" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-
-                  {/* Blossoms — 5-petal flowers at branch tips and nodes */}
-                  {/* Flower helper: cx, cy, r, hue */}
                   {[
                     { cx: 18, cy: 14, r: 5,   h: 345 },
                     { cx: 30, cy: 34, r: 4,   h: 350 },
@@ -94,7 +96,6 @@ function AppContent() {
                     { cx: 80, cy: 10, r: 3.5, h: 338 },
                   ].map(({ cx, cy, r, h }, i) => (
                     <g key={i}>
-                      {/* 5 petals */}
                       {[0, 72, 144, 216, 288].map((angle, j) => {
                         const rad = (angle * Math.PI) / 180
                         const px = cx + Math.cos(rad) * r * 1.1
@@ -110,12 +111,9 @@ function AppContent() {
                           />
                         )
                       })}
-                      {/* Center */}
                       <circle cx={cx} cy={cy} r={r * 0.28} fill="#f5c0d0" fillOpacity={0.95} />
                     </g>
                   ))}
-
-                  {/* Scattered petals floating near the title */}
                   <ellipse cx="50" cy="8"  rx="3" ry="2" transform="rotate(-20, 50, 8)"  fill="#f2cad4" fillOpacity="0.75" />
                   <ellipse cx="96" cy="16" rx="2.5" ry="1.6" transform="rotate(15, 96, 16)" fill="#eabac8" fillOpacity="0.65" />
                   <ellipse cx="22" cy="42" rx="2.5" ry="1.5" transform="rotate(-35, 22, 42)" fill="#f2cad4" fillOpacity="0.60" />
@@ -126,15 +124,20 @@ function AppContent() {
                 <span className="text-cf">YUKI</span>
                 <span className="text-px-text">VERSE</span>
               </h1>
-              <p className="mt-2 font-pixel text-[7px] text-px-dim">
-                CP DASHBOARD v1.0
-              </p>
+              <p className="mt-2 font-pixel text-[7px] text-px-dim">DASHBOARD</p>
             </div>
 
-            <div className="flex items-center gap-3">
-              {/* Responsive 3-theme segmented control */}
-              <ThemeSwitcher />
+            {/* Nav tabs */}
+            <nav className="flex items-center gap-2">
+              <NavTab to="/"          label="HOME" />
+              <NavTab to="/dashboard" label="DASHBOARD" />
+              <NavTab to="/blog"      label="BLOG" />
+            </nav>
+            </div>
 
+            {/* Right controls */}
+            <div className="flex items-center gap-3">
+              <ThemeSwitcher />
               <a
                 href="https://github.com/nguyenuy1409"
                 target="_blank"
@@ -148,42 +151,18 @@ function AppContent() {
                 NGUYENUY1409
               </a>
             </div>
+
           </div>
         </header>
 
-        {/* ── Main — layout & grid unchanged ─────────────────────────────── */}
-        <main className="mx-auto max-w-6xl space-y-4 px-4 py-6">
-          <SyncStatus />
-          <PlatformCards />
+        {/* ── Routes ───────────────────────────────────────────────────────── */}
+        <Routes>
+          <Route path="/"          element={<HomePage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/blog"      element={<BlogPage />} />
+        </Routes>
 
-          <Section title="ACTIVITY HEATMAP // last 365 days">
-            <ActivityHeatmap />
-          </Section>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
-            <div className="lg:col-span-3">
-              <Section title="DAILY ACTIVITY // last 90 days">
-                <DailyChart />
-              </Section>
-            </div>
-            <div className="lg:col-span-2">
-              <Section title="ACTIVITY FEED">
-                <ActivityFeed />
-              </Section>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Section title="CUMULATIVE PROGRESS">
-              <CumulativeChart />
-            </Section>
-            <Section title="RATING HISTORY">
-              <RatingChart />
-            </Section>
-          </div>
-        </main>
-
-        {/* ── Footer ─────────────────────────────────────────────────────── */}
+        {/* ── Footer ───────────────────────────────────────────────────────── */}
         <footer className="mt-12 border-t-2 border-px-border py-6">
           <p className="text-center font-pixel text-[7px] text-px-dim">
             AUTO-SYNC: CF/AC/LC EVERY 6H &nbsp;|&nbsp; GH EVERY 1H
@@ -199,8 +178,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AppShell />
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
