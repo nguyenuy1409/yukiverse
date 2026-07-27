@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSyncStatus } from '../hooks/useStats'
+import { useTheme } from '../contexts/ThemeContext'
 import { PLATFORM_COLORS, PLATFORM_LABELS } from '../types'
 import { api } from '../api/client'
 import dayjs from 'dayjs'
@@ -81,6 +82,8 @@ const blinkStyle = `
 
 export function SyncStatus() {
   const { data, loading, refetch: refetchStatus } = useSyncStatus()
+  const { theme } = useTheme()
+  const isSakura  = theme === 'sakura'
 
   const [isSyncing, setIsSyncing]   = useState(false)
   const [syncDone, setSyncDone]     = useState(false)
@@ -168,7 +171,7 @@ export function SyncStatus() {
 
       {/* main bar */}
       <div
-        className="flex flex-wrap items-center gap-6 border-2 border-px-border bg-px-panel px-4 py-2"
+        className="sync-bar flex flex-wrap items-center gap-6 border-2 border-px-border bg-px-panel px-4 py-2"
         style={{ boxShadow: '4px 4px 0 0 rgba(0,0,0,0.9)' }}
       >
         <span className="font-pixel text-[7px] text-px-dim">AUTO-SYNC</span>
@@ -207,7 +210,15 @@ export function SyncStatus() {
             onClick={doSync}
             disabled={isSyncing}
             className="border-2 border-px-border bg-px-bg px-3 py-1 font-pixel text-[7px] text-px-dim transition-colors hover:border-gh hover:text-gh disabled:opacity-40"
-            style={{ boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)' }}
+            style={isSakura ? {
+              background: 'rgba(136, 184, 112, 0.15)',
+              border: '1px solid rgba(136, 184, 112, 0.50)',
+              borderRadius: '8px',
+              color: '#88b870',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.20)',
+            } : {
+              boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)',
+            }}
           >
             {isSyncing ? '[ SYNCING ]' : '[ SYNC NOW ]'}
           </button>
@@ -217,7 +228,7 @@ export function SyncStatus() {
       {/* expandable progress panel */}
       {showPanel && (
         <div
-          className="flex flex-wrap gap-4 border-2 border-t-0 border-px-border bg-px-bg px-4 py-2"
+          className="sync-bar-sub flex flex-wrap gap-4 border-2 border-t-0 border-px-border bg-px-bg px-4 py-2"
           style={{ boxShadow: '4px 4px 0 0 rgba(0,0,0,0.9)' }}
         >
           {SYNC_JOBS.map(({ key, label }) => {

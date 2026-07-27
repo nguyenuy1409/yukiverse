@@ -4,20 +4,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Platform accent colors (retro-saturated)
+        // Platform accent colors — always the same regardless of theme
         cf: '#38bdf8',
         ac: '#fb923c',
         lc: '#fbbf24',
         gh: '#4ade80',
-        // Pixel art dark palette
+        // Theme-aware palette — driven by CSS custom properties on :root
         px: {
-          bg:      '#07070f',
-          panel:   '#0d0d1c',
-          border:  '#1e2040',
-          border2: '#2a2d50',
-          muted:   '#3a3d60',
-          text:    '#b8bce8',
-          dim:     '#4a4d70',
+          bg:      'rgb(var(--px-bg) / <alpha-value>)',
+          panel:   'rgb(var(--px-panel) / <alpha-value>)',
+          border:  'rgb(var(--px-border) / <alpha-value>)',
+          border2: 'rgb(var(--px-border2) / <alpha-value>)',
+          muted:   'rgb(var(--px-muted) / <alpha-value>)',
+          text:    'rgb(var(--px-text) / <alpha-value>)',
+          dim:     'rgb(var(--px-dim) / <alpha-value>)',
         },
       },
       fontFamily: {
@@ -25,11 +25,11 @@ export default {
         mono:  ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
-        pixel:    '4px 4px 0 0 rgba(0,0,0,0.9)',
-        'pixel-cf': '4px 4px 0 0 #38bdf8',
-        'pixel-ac': '4px 4px 0 0 #fb923c',
-        'pixel-lc': '4px 4px 0 0 #fbbf24',
-        'pixel-gh': '4px 4px 0 0 #4ade80',
+        pixel:       '4px 4px 0 0 rgba(0,0,0,0.9)',
+        'pixel-cf':  '4px 4px 0 0 #38bdf8',
+        'pixel-ac':  '4px 4px 0 0 #fb923c',
+        'pixel-lc':  '4px 4px 0 0 #fbbf24',
+        'pixel-gh':  '4px 4px 0 0 #4ade80',
       },
     },
   },

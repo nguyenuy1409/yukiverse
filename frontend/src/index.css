@@ -2,13 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   CSS VARIABLES — one block per theme, applied to :root via data-theme attr
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── CYBER (default) ── */
+:root,
+:root[data-theme="cyber"] {
+  --px-bg:      7 7 15;          /* #07070f  deep space black      */
+  --px-panel:   13 13 28;        /* #0d0d1c  dark panel            */
+  --px-border:  30 32 64;        /* #1e2040  terminal border       */
+  --px-border2: 42 45 80;        /* #2a2d50  slightly lighter      */
+  --px-muted:   58 61 96;        /* #3a3d60  muted                 */
+  --px-text:    184 188 232;     /* #b8bce8  cyan-lavender text    */
+  --px-dim:     74 77 112;       /* #4a4d70  dim text              */
+}
+
+/* ── SAKURA — palette extracted from the cat/stairs anime image ──
+   Analyzed tones:
+     Cherry blossom:   #e8b4c4 (soft muted pink, NOT candy)
+     Sky blue:         #a8c8e4 (pale lived-in sky)
+     Stone wall:       #b8b0a0 (warm asphalt/concrete)
+     Hydrangea purple: #c4b0d8 (subtle lavender accent)
+     Building warm:    #d4c8b4 (warm beige walls)
+     Deep shadow:      rgba(20, 14, 10, 0.70)
+   Glass: white-bordered frosted dark glass — text stays crisp,
+   background image shows through beautifully.
+   ── */
+:root[data-theme="sakura"] {
+  --px-bg:      232 220 215;     /* warm stone — fallback only     */
+  --px-panel:   22 14 10;        /* warm dark — frosted glass base */
+  --px-border:  255 255 255;     /* white border (glassmorphism)   */
+  --px-border2: 232 180 200;     /* soft blossom pink              */
+  --px-muted:   196 160 148;     /* warm muted peach               */
+  --px-text:    248 242 238;     /* warm soft white                */
+  --px-dim:     168 136 124;     /* warm dim                       */
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   BASE LAYER
+   ═══════════════════════════════════════════════════════════════════════════════ */
 @layer base {
   * { box-sizing: border-box; }
 
+  html { height: 100%; }
+
   body {
     font-family: "JetBrains Mono", monospace;
-    background-color: #07070f;
-    color: #b8bce8;
+    background-color: rgb(var(--px-bg));
+    color: rgb(var(--px-text));
+    min-height: 100%;
+    transition: background-color 0.5s ease, color 0.5s ease;
+  }
+
+  /* ── CYBER: retro horizontal scanlines ── */
+  :root[data-theme="cyber"] body,
+  :root:not([data-theme]) body {
     background-image: repeating-linear-gradient(
       0deg,
       transparent,
@@ -18,41 +68,148 @@
     );
   }
 
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  /* ── SAKURA: real anime image background ── */
+  :root[data-theme="sakura"] body {
+    background-color: #b8cdd8; /* fallback while image loads */
+    background-image: url('/bg-sakura.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #2a2d50; }
-  ::-webkit-scrollbar-thumb:hover { background: #3a3d60; }
+  ::-webkit-scrollbar-thumb { background: rgb(var(--px-border2)); transition: background 0.4s; }
+  ::-webkit-scrollbar-thumb:hover { background: rgb(var(--px-muted)); }
 }
 
+/* ═══════════════════════════════════════════════════════════════════════════════
+   COMPONENTS
+   ═══════════════════════════════════════════════════════════════════════════════ */
 @layer components {
-  /* Use raw CSS values - @apply with custom colors is unreliable in components layer */
+
+  /* ── CYBER panel (default pixel art sharp box) ── */
   .pixel-panel {
-    background-color: #0d0d1c;
-    border: 2px solid #1e2040;
+    background-color: rgb(var(--px-panel));
+    border: 2px solid rgb(var(--px-border));
     box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 0.9);
+    transition:
+      background 0.5s ease,
+      border-color 0.5s ease,
+      box-shadow 0.5s ease,
+      border-radius 0.5s ease,
+      backdrop-filter 0.5s ease;
   }
 
+  /* ── SAKURA: glassmorphism — white translucent border, strong blur ── */
+  :root[data-theme="sakura"] .pixel-panel {
+    background: rgba(20, 13, 10, 0.62) !important;
+    backdrop-filter: blur(20px) saturate(1.6) brightness(1.05);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6) brightness(1.05);
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-radius: 16px;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.04) !important;
+  }
+
+/* ── Title bars ── */
   .pixel-title-bar {
-    background-color: #1e2040;
-    border-bottom: 2px solid #1e2040;
+    background-color: rgb(var(--px-border));
+    border-bottom: 2px solid rgb(var(--px-border));
     padding: 8px 12px;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
   }
 
-  .pixel-title-bar span {
+  :root[data-theme="sakura"] .pixel-title-bar {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 16px 16px 0 0;
+  }
+
+.pixel-title-bar span {
     font-family: "Press Start 2P", monospace;
     font-size: 8px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #b8bce8;
+    color: rgb(var(--px-text));
+    transition: color 0.5s ease, text-shadow 0.5s ease;
   }
 
-  @keyframes blink {
+  :root[data-theme="sakura"] .pixel-title-bar span {
+    color: #f0e4dc !important;       /* warm soft white — matches image tones */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.50);
+  }
+
+@keyframes blink {
     0%, 100% { opacity: 1; }
     50%       { opacity: 0; }
   }
-
   .pixel-cursor::after {
     content: '_';
     animation: blink 1s step-end infinite;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="sakura"] header {
+  background: rgba(18, 12, 9, 0.70) !important;
+  backdrop-filter: blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.28), inset 0 -1px 0 rgba(255,255,255,0.06) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="sakura"] footer {
+  border-top: 1px solid rgba(240, 180, 196, 0.28) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SYNC STATUS BAR
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+:root[data-theme="sakura"] .sync-bar {
+  background: rgba(18, 12, 9, 0.65) !important;
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="sakura"] .sync-bar-sub {
+  background: rgba(18, 12, 9, 0.55) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: none !important;
+  border-radius: 0 0 12px 12px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SAKURA PETAL ANIMATION
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+@keyframes petal-fall {
+  0% {
+    transform: translateY(-24px) translateX(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  7%  { opacity: 1; }
+  50% {
+    transform: translateY(48vh) translateX(var(--sway)) rotate(185deg) scale(0.88);
+  }
+  93% { opacity: 0.75; }
+  100% {
+    transform: translateY(108vh) translateX(calc(var(--sway) * -0.4)) rotate(330deg) scale(0.5);
+    opacity: 0;
   }
 }
