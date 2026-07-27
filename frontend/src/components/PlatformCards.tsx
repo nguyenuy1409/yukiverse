@@ -17,20 +17,11 @@ const PIXEL_SHADOW: Record<string, string> = {
   github:     '4px 4px 0 0 #4ade80',
 }
 
-// Soft pastel glow colors for sakura mode
-const SAKURA_GLOW: Record<string, string> = {
-  codeforces: 'rgba(56, 189, 248, 0.25)',
-  atcoder:    'rgba(251, 146, 60, 0.25)',
-  leetcode:   'rgba(251, 191, 36, 0.25)',
-  github:     'rgba(74, 222, 128, 0.25)',
-}
 
 function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
   const color   = PLATFORM_COLORS[stats.platform] ?? '#6B7280'
   const label   = PLATFORM_LABELS[stats.platform] ?? stats.platform
   const profile = PLATFORM_PROFILES[stats.platform]
-  const glow    = SAKURA_GLOW[stats.platform] ?? 'rgba(255,182,200,0.25)'
-
   const hasBreakdown =
     stats.easySolved > 0 || stats.mediumSolved > 0 || stats.hardSolved > 0
 
