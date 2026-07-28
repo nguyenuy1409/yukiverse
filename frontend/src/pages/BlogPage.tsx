@@ -218,10 +218,6 @@ export function BlogPage() {
     else setSearchParams({ category: cat })
   }
 
-  const pillBase: React.CSSProperties = isSakura
-    ? { borderRadius: '999px', border: '1px solid rgba(255,182,193,0.35)', backdropFilter: 'blur(8px)' }
-    : { border: '2px solid #1e2040', boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)' }
-
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
 
