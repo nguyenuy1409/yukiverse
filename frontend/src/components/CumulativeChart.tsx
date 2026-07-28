@@ -114,9 +114,8 @@ export function CumulativeChart() {
         {PLATFORMS.map(p => (
           <Area
             key={p}
-            type="stepAfter"
+            type="monotone"
             dataKey={p}
-            stackId="1"
             stroke={areaColors[p]}
             strokeWidth={1.5}
             fill={`url(#grad-${p})`}
