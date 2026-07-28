@@ -68,63 +68,44 @@ function AppShell() {
             {/* Logo + Nav */}
             <div className="flex items-center gap-6">
             <div className="relative">
+
+              {/* Sakura branch — sits behind text via z-0 */}
               {isSakura && (
-                <svg
+                <img
+                  src="/sakura-branch.png"
+                  alt=""
                   aria-hidden="true"
-                  width="130" height="52"
-                  viewBox="0 0 130 52"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
                   style={{
                     position: 'absolute',
-                    top: '-18px',
-                    left: '-18px',
+                    top: '-22px',
+                    left: '-10px',
+                    width: '160px',
                     pointerEvents: 'none',
-                    opacity: 0.82,
+                    opacity: 0.80,
+                    imageRendering: 'pixelated',
+                    zIndex: 0,
                   }}
-                >
-                  <path d="M8 44 Q32 28 58 18 Q80 10 108 6" stroke="#b07048" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-                  <path d="M30 34 Q24 22 18 14" stroke="#b07048" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                  <path d="M72 16 Q80 8 90 4" stroke="#b07048" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-                  {[
-                    { cx: 18, cy: 14, r: 5,   h: 345 },
-                    { cx: 30, cy: 34, r: 4,   h: 350 },
-                    { cx: 90, cy:  4, r: 4.5, h: 340 },
-                    { cx: 108,cy:  6, r: 5,   h: 348 },
-                    { cx: 58, cy: 18, r: 3.5, h: 343 },
-                    { cx: 44, cy: 26, r: 3,   h: 352 },
-                    { cx: 80, cy: 10, r: 3.5, h: 338 },
-                  ].map(({ cx, cy, r, h }, i) => (
-                    <g key={i}>
-                      {[0, 72, 144, 216, 288].map((angle, j) => {
-                        const rad = (angle * Math.PI) / 180
-                        const px = cx + Math.cos(rad) * r * 1.1
-                        const py = cy + Math.sin(rad) * r * 1.1
-                        return (
-                          <ellipse
-                            key={j}
-                            cx={px} cy={py}
-                            rx={r * 0.8} ry={r * 0.55}
-                            transform={`rotate(${angle + 90}, ${px}, ${py})`}
-                            fill={`hsl(${h}, 72%, 88%)`}
-                            fillOpacity={0.90}
-                          />
-                        )
-                      })}
-                      <circle cx={cx} cy={cy} r={r * 0.28} fill="#f5c0d0" fillOpacity={0.95} />
-                    </g>
-                  ))}
-                  <ellipse cx="50" cy="8"  rx="3" ry="2" transform="rotate(-20, 50, 8)"  fill="#f2cad4" fillOpacity="0.75" />
-                  <ellipse cx="96" cy="16" rx="2.5" ry="1.6" transform="rotate(15, 96, 16)" fill="#eabac8" fillOpacity="0.65" />
-                  <ellipse cx="22" cy="42" rx="2.5" ry="1.5" transform="rotate(-35, 22, 42)" fill="#f2cad4" fillOpacity="0.60" />
-                </svg>
+                />
               )}
 
-              <h1 className="font-pixel text-base leading-none">
-                <span className="text-cf">YUKI</span>
-                <span className="text-px-text">VERSE</span>
-              </h1>
-              <p className="mt-2 font-pixel text-[7px] text-px-dim">DASHBOARD</p>
+              {/* Text — above branch */}
+              <div className="relative" style={{ zIndex: 1 }}>
+                <h1
+                  className="font-pixel text-base leading-none"
+                  style={isSakura ? {
+                    filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.7)) drop-shadow(0 0px 6px rgba(0,0,0,0.5))',
+                  } : undefined}
+                >
+                  <span className="text-cf">YUKI</span>
+                  <span className="text-px-text">VERSE</span>
+                </h1>
+                <p
+                  className="mt-2 font-pixel text-[7px] text-px-dim"
+                  style={isSakura ? { filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.8))' } : undefined}
+                >
+                  DASHBOARD
+                </p>
+              </div>
             </div>
 
             {/* Nav tabs */}
