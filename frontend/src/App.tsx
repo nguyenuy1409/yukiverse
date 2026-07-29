@@ -5,6 +5,7 @@ import { SakuraPetals }            from './components/SakuraPetals'
 import { HomePage }                from './pages/HomePage'
 import { DashboardPage }           from './pages/DashboardPage'
 import { BlogPage }                from './pages/BlogPage'
+import { ResourcesPage }           from './pages/ResourcesPage'
 import { useState }                from 'react'
 
 const BLOG_CATEGORIES = ['All', 'Core Systems & C++', 'HFT & Quant', 'Finance', 'Mathematics', 'Curations']
@@ -245,9 +246,10 @@ function AppShell() {
 
             {/* Nav tabs */}
             <nav className="flex items-center gap-2">
-              <NavTab to="/"          label="HOME" />
-              <NavTab to="/dashboard" label="DASHBOARD" />
+              <NavTab to="/"           label="HOME" />
+              <NavTab to="/dashboard"  label="DASHBOARD" />
               <BlogNavItem />
+              <NavTab to="/resources"  label="RESOURCES" />
             </nav>
             </div>
 
@@ -273,9 +275,10 @@ function AppShell() {
 
         {/* ── Routes ───────────────────────────────────────────────────────── */}
         <Routes>
-          <Route path="/"          element={<HomePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/blog"      element={<BlogPage />} />
+          <Route path="/"           element={<HomePage />} />
+          <Route path="/dashboard"  element={<DashboardPage />} />
+          <Route path="/blog"       element={<BlogPage />} />
+          <Route path="/resources"  element={<ResourcesPage />} />
         </Routes>
 
         {/* ── Footer ───────────────────────────────────────────────────────── */}
