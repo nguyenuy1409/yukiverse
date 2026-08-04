@@ -56,6 +56,7 @@
     transition: background-color 0.5s ease, color 0.5s ease;
   }
 
+
   /* ── CYBER: retro horizontal scanlines ── */
   :root[data-theme="cyber"] body,
   :root:not([data-theme]) body {
@@ -139,7 +140,11 @@
   }
 
   :root[data-theme="sakura"] .pixel-title-bar span {
-    color: #f0e4dc !important;       /* warm soft white — matches image tones */
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.12em !important;
+    color: #f0e4dc !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.50);
   }
 

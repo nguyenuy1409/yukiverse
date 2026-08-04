@@ -6,6 +6,7 @@ import { HomePage }                from './pages/HomePage'
 import { DashboardPage }           from './pages/DashboardPage'
 import { BlogPage }                from './pages/BlogPage'
 import { ResourcesPage }           from './pages/ResourcesPage'
+import { ProgressPage }            from './pages/ProgressPage'
 import { useState }                from 'react'
 
 const BLOG_CATEGORIES = ['All', 'Core Systems & C++', 'HFT & Quant', 'Finance', 'Mathematics', 'Curations']
@@ -192,7 +193,9 @@ function AppShell() {
     <div className="relative min-h-screen">
       {isSakura && <SakuraPetals />}
 
-      <div className="relative" style={{ zIndex: 10 }}>
+      {/* font-sans in sakura mode: Inter cascades to all page content.
+          font-pixel / font-mono on individual elements still override correctly. */}
+      <div className={`relative ${isSakura ? 'font-sans' : ''}`} style={{ zIndex: 10 }}>
 
         {/* ── Header ───────────────────────────────────────────────────────── */}
         <header
@@ -250,6 +253,7 @@ function AppShell() {
               <NavTab to="/dashboard"  label="DASHBOARD" />
               <BlogNavItem />
               <NavTab to="/resources"  label="RESOURCES" />
+              <NavTab to="/progress"   label="PROGRESS" />
             </nav>
             </div>
 
@@ -279,6 +283,7 @@ function AppShell() {
           <Route path="/dashboard"  element={<DashboardPage />} />
           <Route path="/blog"       element={<BlogPage />} />
           <Route path="/resources"  element={<ResourcesPage />} />
+          <Route path="/progress"   element={<ProgressPage />} />
         </Routes>
 
         {/* ── Footer ───────────────────────────────────────────────────────── */}

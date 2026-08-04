@@ -180,7 +180,10 @@ export function SyncStatus() {
         className="sync-bar flex flex-wrap items-center gap-6 border-2 border-px-border bg-px-panel px-4 py-2"
         style={{ boxShadow: '4px 4px 0 0 rgba(0,0,0,0.9)' }}
       >
-        <span className="font-pixel text-[7px] text-px-dim">AUTO-SYNC</span>
+        <span className={isSakura
+          ? 'font-geist-mono text-[10px] font-semibold tracking-widest text-white/50'
+          : 'font-pixel text-[7px] text-px-dim'
+        }>AUTO-SYNC</span>
 
         {data.platforms.map(p => {
           const accent = (isSakura ? SAKURA_PLATFORM_COLORS[p.platform] : PLATFORM_COLORS[p.platform]) ?? '#6B7280'
@@ -188,10 +191,13 @@ export function SyncStatus() {
           const name   = (PLATFORM_LABELS[p.platform] ?? p.platform).toUpperCase()
           return (
             <div key={p.platform} className="flex items-center gap-2">
-              <div className="h-2 w-2" style={{ backgroundColor: dot }} />
-              <span className="font-pixel text-[7px]" style={{ color: accent }}>{name}</span>
-              <span className="font-mono text-[9px] text-px-dim">
-                {p.lastSyncAt ? dayjs(p.lastSyncAt).fromNow() : 'NEVER'}
+              <div className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} />
+              <span
+                className={isSakura ? 'font-geist-mono text-[11px] font-semibold' : 'font-pixel text-[7px]'}
+                style={{ color: accent }}
+              >{name}</span>
+              <span className={isSakura ? 'font-geist-mono text-[10px] text-white/35' : 'font-mono text-[9px] text-px-dim'}>
+                {p.lastSyncAt ? dayjs(p.lastSyncAt).fromNow() : 'never'}
               </span>
             </div>
           )
@@ -199,34 +205,40 @@ export function SyncStatus() {
 
         <div className="ml-auto flex items-center gap-3">
           {!isSyncing && !syncDone && (
-            <span className="font-pixel text-[6px] text-px-dim">NEXT: {countdownStr}</span>
+            <span className={isSakura
+              ? 'font-geist-mono text-[10px] text-white/40'
+              : 'font-pixel text-[6px] text-px-dim'
+            }>NEXT: {countdownStr}</span>
           )}
           {isSyncing && (
-            <span className="px-blink font-pixel text-[6px]" style={{ color: '#fbbf24' }}>
-              SYNCING...
+            <span className={`px-blink ${isSakura ? 'font-geist-mono text-[10px]' : 'font-pixel text-[6px]'}`} style={{ color: '#fbbf24' }}>
+              {isSakura ? 'syncing...' : 'SYNCING...'}
             </span>
           )}
           {syncDone && (
-            <span className="font-pixel text-[6px]" style={{ color: '#4ade80' }}>
-              DONE! RELOADING...
+            <span className={isSakura ? 'font-geist-mono text-[10px]' : 'font-pixel text-[6px]'} style={{ color: '#4ade80' }}>
+              {isSakura ? 'done — reloading...' : 'DONE! RELOADING...'}
             </span>
           )}
 
           <button
             onClick={doSync}
             disabled={isSyncing}
-            className="border-2 border-px-border bg-px-bg px-3 py-1 font-pixel text-[7px] text-px-dim transition-colors hover:border-gh hover:text-gh disabled:opacity-40"
+            className={`px-3 py-1 transition-colors disabled:opacity-40 ${
+              isSakura
+                ? 'font-geist text-[12px] font-semibold rounded-lg'
+                : 'border-2 border-px-border bg-px-bg font-pixel text-[7px] text-px-dim hover:border-gh hover:text-gh'
+            }`}
             style={isSakura ? {
               background: 'rgba(136, 184, 112, 0.15)',
               border: '1px solid rgba(136, 184, 112, 0.50)',
-              borderRadius: '8px',
               color: '#88b870',
               boxShadow: '0 2px 8px rgba(0,0,0,0.20)',
             } : {
               boxShadow: '2px 2px 0 0 rgba(0,0,0,0.9)',
             }}
           >
-            {isSyncing ? '[ SYNCING ]' : '[ SYNC NOW ]'}
+            {isSyncing ? 'Syncing...' : 'Sync Now'}
           </button>
         </div>
       </div>
@@ -245,7 +257,7 @@ export function SyncStatus() {
                   className={r.status === 'running' ? 'px-blink h-2 w-2' : 'h-2 w-2'}
                   style={{ backgroundColor: PLAT_DOT[r.status] }}
                 />
-                <span className="font-pixel text-[6px] text-px-dim">{label}</span>
+                <span className={isSakura ? 'font-sans text-[11px] font-semibold text-white/60' : 'font-pixel text-[6px] text-px-dim'}>{label}</span>
                 {r.msg && (
                   <span
                     className="font-mono text-[8px]"

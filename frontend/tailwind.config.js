@@ -21,8 +21,11 @@ export default {
         },
       },
       fontFamily: {
-        pixel: ['"Press Start 2P"', 'monospace'],
-        mono:  ['"JetBrains Mono"', 'monospace'],
+        sans:        ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        pixel:       ['"Press Start 2P"', 'monospace'],
+        mono:        ['"JetBrains Mono"', 'monospace'],
+        geist:       ['Geist', 'ui-sans-serif', 'sans-serif'],
+        'geist-mono': ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
       boxShadow: {
         pixel:       '4px 4px 0 0 rgba(0,0,0,0.9)',

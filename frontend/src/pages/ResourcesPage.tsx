@@ -61,7 +61,6 @@ const RESOURCES: ResourceSection[] = [
     index: '05',
     heading: 'Mathematics',
     items: [
-      { title: 'Introduction to Probability', subtitle: 'Joseph K. Blitzstein' },
       { title: 'First Course in Probability', subtitle: 'Sheldon M. Ross' },
       { title: 'An Introduction to Statistical Learning (ISLP)', subtitle: 'Gareth James et al.' },
     ],

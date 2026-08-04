@@ -153,7 +153,7 @@ function ArticleCard({ article }: { article: typeof ARTICLES[0] }) {
           {article.tags.map(tag => (
             <span
               key={tag}
-              className="font-pixel text-[6px] tracking-widest px-2 py-0.5"
+              className={`${isSakura ? 'font-mono text-[9px] tracking-wide' : 'font-pixel text-[6px] tracking-widest'} px-2 py-0.5`}
               style={{
                 color: accent,
                 border: `1px solid ${accent}40`,
@@ -168,7 +168,7 @@ function ArticleCard({ article }: { article: typeof ARTICLES[0] }) {
 
         {/* Title */}
         <h2
-          className="mb-2 font-pixel text-[11px] leading-relaxed tracking-wide transition-colors group-hover:opacity-80"
+          className={`mb-2 ${isSakura ? 'font-sans text-[15px] font-bold leading-snug' : 'font-pixel text-[11px] leading-relaxed tracking-wide'} transition-colors group-hover:opacity-80`}
           style={{
             color: isSakura ? '#f5e6e8' : '#e8eaf8',
             ...(isSakura ? { textShadow: '0 1px 3px rgba(0,0,0,0.3)' } : {}),
@@ -179,7 +179,7 @@ function ArticleCard({ article }: { article: typeof ARTICLES[0] }) {
 
         {/* Excerpt */}
         <p
-          className="mb-4 font-mono text-[10px] leading-relaxed"
+          className={`mb-4 ${isSakura ? 'font-sans text-[13px]' : 'font-mono text-[10px]'} leading-relaxed`}
           style={{ color: isSakura ? '#c8a8a8' : '#6a6d90' }}
         >
           {article.excerpt}
@@ -192,7 +192,7 @@ function ArticleCard({ article }: { article: typeof ARTICLES[0] }) {
           <span className="font-mono text-[9px]" style={{ color: isSakura ? '#b09090' : '#4a4d70' }}>
             {formatDate(article.date)}
           </span>
-          <span className="font-pixel text-[7px]" style={{ color: accent }}>
+          <span className="font-mono text-[9px]" style={{ color: accent }}>
             {article.author}
           </span>
         </div>
@@ -233,23 +233,22 @@ export function BlogPage() {
         />
         <div className="relative">
           <h1
-            className="font-pixel text-[13px] tracking-widest"
+            className={`${isSakura ? 'font-sans text-[32px] font-black tracking-tight leading-none' : 'font-pixel text-[13px] tracking-widest'}`}
             style={{
               color: '#ffffff',
-              fontWeight: 900,
               textShadow: '0 2px 5px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)',
             }}
           >
-            &gt; BLOG
+            {isSakura ? 'BLOG' : '> BLOG'}
           </h1>
           <p
-            className="mt-1 font-mono text-[10px] font-semibold"
+            className={`mt-1 ${isSakura ? 'font-sans text-[13px] font-medium' : 'font-mono text-[10px] font-semibold'}`}
             style={{
               color: '#ffffff',
               textShadow: '0 1px 4px rgba(0,0,0,1)',
             }}
           >
-            {ARTICLES.length} posts — systems, quant & more
+            {ARTICLES.length} posts · systems, quant & more
           </p>
         </div>
       </div>
@@ -262,7 +261,7 @@ export function BlogPage() {
             <button
               key={cat}
               onClick={() => setCategory(cat)}
-              className="font-pixel text-[7px] tracking-widest px-3 py-1.5 transition-all duration-200 backdrop-blur-md"
+              className={`${isSakura ? 'font-sans text-[13px] font-medium' : 'font-pixel text-[7px] tracking-widest'} px-3 py-1.5 transition-all duration-200 backdrop-blur-md`}
               style={isActive ? (isSakura ? {
                 background: '#3a2622',
                 color: '#ffffff',

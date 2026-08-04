@@ -72,7 +72,7 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
       <div className="flex items-center gap-2 px-3 py-2" style={titleBarStyle}>
         <PlatformIcon platform={stats.platform} size={2} />
         <span
-          className={`font-pixel text-[7px] tracking-widest ${isSakura ? (SAKURA_TEXT_CLASSES[stats.platform] ?? '') : ''}`}
+          className={`${isSakura ? 'font-geist-mono text-[11px] font-semibold tracking-wide' : 'font-pixel text-[7px] tracking-widest'} ${isSakura ? (SAKURA_TEXT_CLASSES[stats.platform] ?? '') : ''}`}
           style={isSakura ? undefined : { color }}
         >
           {label.toUpperCase()}
@@ -82,7 +82,7 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
       {/* Body */}
       <div className="p-4">
         <p
-          className={`font-pixel text-3xl tabular-nums leading-none ${isSakura ? 'text-white' : ''}`}
+          className={`${isSakura ? 'font-geist font-black text-4xl' : 'font-pixel text-3xl'} tabular-nums leading-none ${isSakura ? 'text-white' : ''}`}
           style={isSakura ? undefined : { color }}
         >
           {stats.totalSolved.toString().padStart(3, '0')}
@@ -96,14 +96,16 @@ function StatCard({ stats, theme }: { stats: PlatformStats; theme: string }) {
               <span className="text-red-400">H:{stats.hardSolved}</span>
             </div>
           ) : (
-            <p className={`font-mono text-[10px] ${isSakura ? 'text-white/60' : 'text-px-dim'}`}>
+            <p className={`${isSakura ? 'font-geist text-[11px]' : 'font-mono text-[10px]'} ${isSakura ? 'text-white/60' : 'text-px-dim'}`}>
               {stats.statLabel ?? 'PROBLEMS'}
             </p>
           )}
         </div>
 
-        <p className={`mt-3 font-pixel text-[6px] ${isSakura ? 'text-white/40' : 'text-px-dim'}`}>
-          {dayjs(stats.updatedAt).fromNow().toUpperCase()}
+        <p className={`mt-3 ${isSakura ? 'font-geist-mono text-[10px]' : 'font-pixel text-[6px]'} ${isSakura ? 'text-white/40' : 'text-px-dim'}`}>
+          {isSakura
+            ? dayjs(stats.updatedAt).fromNow()
+            : dayjs(stats.updatedAt).fromNow().toUpperCase()}
         </p>
       </div>
     </a>
