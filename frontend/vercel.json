@@ -1,20 +1,4 @@
 {
-  "functions": {
-    "api/progress.ts":              { "runtime": "@vercel/node@5.9.0" },
-    "api/activity.ts":              { "runtime": "@vercel/node@5.9.0" },
-    "api/sync.ts":                  { "runtime": "@vercel/node@5.9.0" },
-    "api/sync-codeforces.ts":       { "runtime": "@vercel/node@5.9.0" },
-    "api/sync-leetcode.ts":         { "runtime": "@vercel/node@5.9.0" },
-    "api/sync-github.ts":           { "runtime": "@vercel/node@5.9.0" },
-    "api/sync-atcoder.ts":          { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/heatmap.ts":         { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/daily.ts":           { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/cumulative.ts":      { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/rating.ts":          { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/problems.ts":        { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/feed.ts":            { "runtime": "@vercel/node@5.9.0" },
-    "api/stats/sync-status.ts":     { "runtime": "@vercel/node@5.9.0" }
-  },
   "crons": [
     {
       "path":     "/api/sync",
