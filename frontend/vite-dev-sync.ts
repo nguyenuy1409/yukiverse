@@ -4,7 +4,6 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 
 const PLATFORM = { codeforces: 1, atcoder: 2, leetcode: 3, github: 4 } as const
-const PLATFORM_NAME: Record<number, string> = { 1: 'codeforces', 2: 'atcoder', 3: 'leetcode', 4: 'github' }
 
 async function upsertDailyActivities(sb: SupabaseClient, platformId: number) {
   const { data: logs } = await sb.from('activity_logs').select('occurred_at').eq('platform_id', platformId)
@@ -24,9 +23,8 @@ async function writeSyncLog(sb: SupabaseClient, platformId: number, status: 'suc
 export async function syncCodeforces(sb: SupabaseClient, handle: string) {
   const platformId = PLATFORM.codeforces
   try {
-    // Submissions
-    const cfSub = await fetch(`https://codeforces.com/api/user.status?handle=${encodeURIComponent(handle)}&from=1&count=10000`)
-    const cfSubJson = await cfSub.json()
+    const cfSubRes = await fetch(`https://codeforces.com/api/user.status?handle=${encodeURIComponent(handle)}&from=1&count=10000`)
+    const cfSubJson = await cfSubRes.json() as any
     if (cfSubJson.status !== 'OK') throw new Error(`CF API: ${cfSubJson.comment}`)
     const submissions: any[] = cfSubJson.result
 
@@ -45,18 +43,16 @@ export async function syncCodeforces(sb: SupabaseClient, handle: string) {
 
     await upsertDailyActivities(sb, platformId)
 
-    // Problem stats
     const { data: acLogs } = await sb.from('activity_logs').select('title').eq('platform_id', platformId).eq('verdict', 'OK')
     const totalSolved = new Set((acLogs ?? []).map((l: any) => l.title)).size
     await sb.from('problem_stats').upsert({ platform_id: platformId, total_solved: totalSolved, updated_at: new Date().toISOString() }, { onConflict: 'platform_id' })
 
-    // Rating history
-    const cfRating = await fetch(`https://codeforces.com/api/user.rating?handle=${encodeURIComponent(handle)}`)
-    const cfRatingJson = await cfRating.json()
+    const cfRatingRes = await fetch(`https://codeforces.com/api/user.rating?handle=${encodeURIComponent(handle)}`)
+    const cfRatingJson = await cfRatingRes.json() as any
     if (cfRatingJson.status !== 'OK') throw new Error(`CF API: ${cfRatingJson.comment}`)
     const { data: existingRatings } = await sb.from('rating_history').select('contest_name').eq('platform_id', platformId).not('contest_name', 'is', null)
     const existingContests = new Set((existingRatings ?? []).map((r: any) => r.contest_name))
-    const newRatings = cfRatingJson.result.filter((r: any) => !existingContests.has(r.contestName)).map((r: any) => ({
+    const newRatings = (cfRatingJson.result as any[]).filter(r => !existingContests.has(r.contestName)).map(r => ({
       platform_id: platformId, contest_name: r.contestName, rating: r.newRating, rank: r.rank,
       date: new Date(r.ratingUpdateTimeSeconds * 1000).toISOString(),
     }))
@@ -80,16 +76,16 @@ export async function syncLeetcodeStats(sb: SupabaseClient, username: string) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: `query getUserStats($username: String!) { matchedUser(username: $username) { submitStats { acSubmissionNum { difficulty count } } } }`, variables: { username } }),
     })
-    const json = await r.json()
-    const counts = json?.data?.matchedUser?.submitStats?.acSubmissionNum
+    const json = await r.json() as any
+    const counts: any[] = json?.data?.matchedUser?.submitStats?.acSubmissionNum
     if (!counts) throw new Error(`LeetCode user '${username}' not found`)
-    const get = (d: string) => counts.find((c: any) => c.difficulty === d)?.count ?? 0
+    const get = (d: string) => counts.find(c => c.difficulty === d)?.count ?? 0
     await sb.from('problem_stats').upsert({
       platform_id: platformId, total_solved: get('All'), easy_solved: get('Easy'),
       medium_solved: get('Medium'), hard_solved: get('Hard'), updated_at: new Date().toISOString(),
     }, { onConflict: 'platform_id' })
     await writeSyncLog(sb, platformId, 'success')
-    return { ok: true, total: get('All') }
+    return { ok: true, total: get('All') as number }
   } catch (err: any) {
     await writeSyncLog(sb, platformId, 'failed', err.message)
     return { ok: false, error: err.message }
@@ -110,7 +106,7 @@ export async function syncLeetcodeSubmissions(sb: SupabaseClient, sessionCookie:
         headers: { 'Content-Type': 'application/json', 'Cookie': `LEETCODE_SESSION=${sessionCookie}` },
         body: JSON.stringify({ query: `query submissionList($offset: Int!, $limit: Int!) { submissionList(offset: $offset, limit: $limit) { hasNext submissions { id title statusDisplay timestamp } } }`, variables: { offset: page * 20, limit: 20 } }),
       })
-      const json = await r.json()
+      const json = await r.json() as any
       const list = json?.data?.submissionList
       if (!list) break
       allSubs.push(...list.submissions)
@@ -141,7 +137,7 @@ export async function syncGitHub(sb: SupabaseClient, username: string, token?: s
     for (let page = 1; page <= 3; page++) {
       const r = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/events?per_page=100&page=${page}`, { headers })
       if (!r.ok) break
-      const batch: any[] = await r.json()
+      const batch = await r.json() as any[]
       if (!batch.length) break
       events.push(...batch.filter(e => e.type === 'PushEvent'))
       if (batch.length < 100) break
@@ -172,7 +168,7 @@ export async function syncAtCoder(sb: SupabaseClient, handle: string) {
     for (let page = 0; page < 40; page++) {
       const r = await fetch(`https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=${encodeURIComponent(handle)}&from_second=${fromSecond}`)
       if (!r.ok) break
-      const batch: any[] = await r.json()
+      const batch = await r.json() as any[]
       if (!batch.length) break
       allSubs.push(...batch)
       if (batch.length < 500) break
@@ -190,7 +186,7 @@ export async function syncAtCoder(sb: SupabaseClient, handle: string) {
     const totalSolved = new Set((acLogs ?? []).map((l: any) => l.title)).size
     await sb.from('problem_stats').upsert({ platform_id: platformId, total_solved: totalSolved, updated_at: new Date().toISOString() }, { onConflict: 'platform_id' })
     const ratingRes = await fetch(`https://atcoder.jp/users/${encodeURIComponent(handle)}/history/json`)
-    const ratingChanges: any[] = ratingRes.ok ? await ratingRes.json() : []
+    const ratingChanges = ratingRes.ok ? await ratingRes.json() as any[] : []
     const { data: existingRatings } = await sb.from('rating_history').select('contest_name').eq('platform_id', platformId)
     const existingContests = new Set((existingRatings ?? []).map((r: any) => r.contest_name))
     const newRatings = ratingChanges.filter(r => !existingContests.has(r.ContestScreenName)).map(r => ({

@@ -60,7 +60,7 @@ export default defineConfig(({ mode }) => {
         configureServer(server) {
 
           // ── /api/test ──────────────────────────────────────────────────────
-          server.middlewares.use('/api/test', async (req: any, res: any) => {
+          server.middlewares.use('/api/test', async (_req: any, res: any) => {
             console.log('[test] supabaseUrl:', JSON.stringify(supabaseUrl))
             console.log('[test] serviceKey length:', serviceKey?.length)
             if (!sb) { jsonRes(res, 500, { error: 'sb is null — check SUPABASE_URL and SUPABASE_SERVICE_KEY in .env.local' }); return }
@@ -145,7 +145,7 @@ export default defineConfig(({ mode }) => {
           })
 
           // ── /api/stats/cumulative ──────────────────────────────────────────
-          server.middlewares.use('/api/stats/cumulative', async (req: any, res: any) => {
+          server.middlewares.use('/api/stats/cumulative', async (_req: any, res: any) => {
             if (!sb) { jsonRes(res, 500, { error: 'Missing Supabase credentials' }); return }
             try {
               const { data, error } = await sb.from('daily_activities').select('*').order('date')
@@ -167,7 +167,7 @@ export default defineConfig(({ mode }) => {
           })
 
           // ── /api/stats/rating ──────────────────────────────────────────────
-          server.middlewares.use('/api/stats/rating', async (req: any, res: any) => {
+          server.middlewares.use('/api/stats/rating', async (_req: any, res: any) => {
             if (!sb) { jsonRes(res, 500, { error: 'Missing Supabase credentials' }); return }
             try {
               const { data, error } = await sb.from('rating_history').select('*').in('platform_id', [1, 2]).order('date')
@@ -179,7 +179,7 @@ export default defineConfig(({ mode }) => {
           })
 
           // ── /api/stats/problems ────────────────────────────────────────────
-          server.middlewares.use('/api/stats/problems', async (req: any, res: any) => {
+          server.middlewares.use('/api/stats/problems', async (_req: any, res: any) => {
             if (!sb) { jsonRes(res, 500, { error: 'Missing Supabase credentials' }); return }
             try {
               const { data, error } = await sb.from('problem_stats').select('*')
@@ -248,7 +248,7 @@ export default defineConfig(({ mode }) => {
           })
 
           // ── /api/stats/sync-status ─────────────────────────────────────────
-          server.middlewares.use('/api/stats/sync-status', async (req: any, res: any) => {
+          server.middlewares.use('/api/stats/sync-status', async (_req: any, res: any) => {
             if (!sb) { jsonRes(res, 500, { error: 'Missing Supabase credentials' }); return }
             try {
               const { data, error } = await sb.from('sync_logs').select('*').order('last_sync_at', { ascending: false })

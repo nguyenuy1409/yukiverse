@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { supabase, PLATFORM, upsertDailyActivities, writeSyncLog } from './lib/supabase'
+import { supabase, PLATFORM, upsertDailyActivities, writeSyncLog } from './lib/supabase.js'
 
 const PAGE_SIZE = 500
 const MAX_PAGES = 40

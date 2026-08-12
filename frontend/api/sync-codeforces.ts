@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { supabase, PLATFORM, upsertDailyActivities, writeSyncLog } from './lib/supabase'
+import { supabase, PLATFORM, upsertDailyActivities, writeSyncLog } from './lib/supabase.js'
 
 const CF_API = 'https://codeforces.com/api'
 

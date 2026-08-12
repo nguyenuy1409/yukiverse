@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { supabase, PLATFORM } from '../lib/supabase'
+import { supabase, PLATFORM } from '../lib/supabase.js'
 
 const PLATFORM_NAME: Record<number, string> = {
   [PLATFORM.codeforces]: 'codeforces',
