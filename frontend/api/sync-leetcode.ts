@@ -3,6 +3,13 @@ import { supabase, PLATFORM, upsertDailyActivities, writeSyncLog } from './lib/s
 
 const GRAPHQL_ENDPOINT = 'https://leetcode.com/graphql'
 
+const BROWSER_HEADERS = {
+  'Content-Type':  'application/json',
+  'Origin':        'https://leetcode.com',
+  'Referer':       'https://leetcode.com/',
+  'User-Agent':    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+}
+
 const USER_STATS_QUERY = `
   query getUserStats($username: String!) {
     matchedUser(username: $username) {
@@ -47,13 +54,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // ── Problem stats (public, no cookie needed) ──────────────────────────────
     const statsRes = await fetch(GRAPHQL_ENDPOINT, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: BROWSER_HEADERS,
       body:    JSON.stringify({ query: USER_STATS_QUERY, variables: { username } }),
     })
     const statsJson = await statsRes.json()
     const counts    = statsJson?.data?.matchedUser?.submitStats?.acSubmissionNum
 
-    if (!counts) throw new Error(`LeetCode user '${username}' not found or has no stats`)
+    if (!counts) {
+      const errDetail = JSON.stringify(statsJson?.errors ?? statsJson)
+      throw new Error(`LeetCode: no stats for '${username}'. Response: ${errDetail}`)
+    }
 
     const get = (difficulty: string) =>
       counts.find((c: any) => c.difficulty === difficulty)?.count ?? 0
@@ -90,8 +100,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const r = await fetch(GRAPHQL_ENDPOINT, {
           method:  'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'Cookie':       `LEETCODE_SESSION=${sessionCookie}`,
+            ...BROWSER_HEADERS,
+            'Cookie': `LEETCODE_SESSION=${sessionCookie}`,
           },
           body: JSON.stringify({
             query:     SUBMISSION_LIST_QUERY,
